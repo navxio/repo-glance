@@ -14,11 +14,10 @@ Dead simple chrome extension that shows github repository metadata as a popup
 
 #### TODO
 
-- [ ] setting like link hover delay, cache github cache timeout
-- [ ] Tags
 - [x] (Perf) Move to gh graphql api
 - [ ] Languages
 - [ ] delegate extra work to service workers
+- [ ] Topics
 
 ### Contributing
 
