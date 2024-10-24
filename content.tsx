@@ -1,17 +1,15 @@
-import CommitIcon from "@mui/icons-material/Commit"
-import GitHubIcon from "@mui/icons-material/GitHub"
-import StarBorderIcon from "@mui/icons-material/StarBorder"
 import Box from "@mui/material/Box"
 import { useAtom } from "jotai"
 import React, { useEffect, useState } from "react"
 
+import { RepoMetaPopup } from "~RepoMetaPopup"
 import { hoverDelayAtom } from "~storageAtoms"
 
 const githubRegex: RegExp =
   /https:\/\/github\.com\/(?!topics|collections|features|explore|issues|pulls|marketplace|settings|apps|events|sponsors|about|search|notifications|organizations|enterprise|stars|gists|readme|users|security|contact|solutions)([A-Za-z0-9-]+)\/([A-Za-z0-9-_]+)(\/[^?]*)?(\?.*)?$/
 
 // export this component
-export const RepoMetadata = () => {
+export const RepoMetadataExtension = () => {
   const [myTimeouts, setMyTimeouts] = useState([]) // will store all the timeouts
   const [hoverDelayMS] = useAtom(hoverDelayAtom)
 
@@ -39,8 +37,14 @@ export const RepoMetadata = () => {
   }, [])
 
   return (
-    <Box>
-      <GitHubIcon />
-    </Box>
+    <RepoMetaPopup
+      repoIdStr="facebook/react"
+      lastCommitTimestamp="2 hours ago"
+      stargazerCount={6666}
+      prCount={10}
+      issueCount={44}
+      forkCount={1200}
+      description={"A javascript library for building user interfaces"}
+    />
   )
 }
