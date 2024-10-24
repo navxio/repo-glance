@@ -24,7 +24,7 @@ export const getStyle: PlasmoGetStyle = () => {
   return style
 }
 
-export const RepoMetaPopup = ({
+export const RepoMetaPopupUI = ({
   repoIdStr,
   lastCommitTimestamp,
   stargazerCount,
