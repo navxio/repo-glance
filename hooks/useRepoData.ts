@@ -61,7 +61,6 @@ const fetchRepoDetails = async ({ queryKey }: any) => {
 // React Query hook to use in a component
 export const useRepositoryDetails = (owner: string, name: string) => {
   return useQuery(["repoDetails", { owner, name }], fetchRepoDetails, {
-    staleTime: 60000, // Adjust cache time as needed
-    cacheTime: 300000
+    staleTime: 3600 * 1000
   })
 }
