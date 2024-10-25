@@ -4,7 +4,7 @@ const githubRegex: RegExp =
   /https:\/\/github\.com\/(?!topics|collections|features|explore|issues|pulls|marketplace|settings|apps|events|sponsors|about|search|notifications|organizations|enterprise|stars|gists|readme|users|security|contact|solutions)([A-Za-z0-9-]+)\/([A-Za-z0-9-_]+)(\/[^?]*)?(\?.*)?$/
 
 // export this component
-export const RepoMetadataExtension = () => {
+const RepoMetadataExtension = () => {
   const [popup, setPopup] = useState(null)
 
   function hidePopup() {
@@ -12,6 +12,7 @@ export const RepoMetadataExtension = () => {
   }
 
   async function fetchMetadataShowPopup(event, owner: string, name: string) {
+    console.log("yay")
     const { default: Popup } = await import("./RepoMetaPopupUI")
     ReactDOM.render(<Popup owner={owner} name={name} />, popup)
   }
@@ -36,3 +37,5 @@ export const RepoMetadataExtension = () => {
 
   return <></>
 }
+
+export default RepoMetadataExtension

@@ -31,7 +31,8 @@ async function getRepoDetails(owner: string, name: string) {
   // tries the cache for ze repo and fetches it from api if not available
   const dataKey = `${owner}-${name}`
   const expiryKey = `${owner}-${name}-expiry`
-  const expiryTimestamp = await storage.get(expiryKey)
+  const expiryTimestampStr = await storage.get(expiryKey)
+  const expiryTimestamp = parseInt(expiryTimestampStr)
   if (Date.now() > expiryTimestamp) {
     const repoData = await fetchRepoDetails({ owner, name })
     await storage.set(dataKey, repoData)
