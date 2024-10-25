@@ -14,7 +14,6 @@ const client = new ApolloClient({
 const GET_REPOSITORY_DETAILS = gql`
   query GetRepositoryDetails($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {
-      name
       description
       stargazers {
         totalCount
@@ -23,6 +22,9 @@ const GET_REPOSITORY_DETAILS = gql`
         totalCount
       }
       pullRequests(states: OPEN) {
+        totalCount
+      }
+      forks {
         totalCount
       }
     }

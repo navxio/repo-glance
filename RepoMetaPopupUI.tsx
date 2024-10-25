@@ -32,14 +32,27 @@ async function getRepoDetails(owner: string, name: string) {
   const dataKey = `${owner}-${name}`
   const expiryKey = `${owner}-${name}-expiry`
   const expiryTimestampStr = await storage.get(expiryKey)
+  console.log(`found expiry timestamp ${expiryTimestampStr}`)
   const expiryTimestamp = parseInt(expiryTimestampStr)
-  if (Date.now() > expiryTimestamp) {
-    const repoData = await fetchRepoDetails({ owner, name })
+  if (!expiryTimestamp || Date.now() > expiryTimestamp) {
+    const repoResponseData = await fetchRepoDetails({ owner, name })
+    const repoDataRaw = repoResponseData["repository"]
+
+    const repoData = {
+      description: repoDataRaw["description"],
+      stargazerCount: repoDataRaw["stargazers"]["totalCount"],
+      prCount: repoDataRaw["pullRequests"]["totalCount"],
+      issueCount: repoDataRaw["issues"]["totalCount"],
+      forkCount: repoDataRaw["forks"]["totalCount"]
+    }
+
+    console.log(`Fetched repoData ${repoData}`)
     await storage.set(dataKey, repoData)
     await storage.set(expiryKey, Date.now() + 3600 * 1000)
     return repoData
   } else {
     const repoData = await storage.get(dataKey)
+    console.log(`Found cached data ${repoData} `)
     chrome.runtime.sendMessage({ type: "REFRESH_REPO_CACHE", owner, name })
     return repoData
   }
@@ -49,6 +62,7 @@ const RepoMetaPopupUI = ({ owner, name }) => {
   const [repoData, setRepoData] = useState({})
 
   useEffect(() => {
+    console.log("fetching repo details")
     getRepoDetails(owner, name)
       .then((data) => setRepoData(data))
       .catch((e) => {
@@ -56,6 +70,9 @@ const RepoMetaPopupUI = ({ owner, name }) => {
       })
   }, [])
 
+  useEffect(() => {
+    console.log("found repoData", repoData)
+  }, [repoData])
   if (!repoData) {
     return <div>Loading...</div>
   }
