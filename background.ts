@@ -21,13 +21,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return storage.set(owner + "-" + name, newData)
         // Optionally, send response back to content script
       })
+      .then(() => {
+        return storage.set(
+          owner + "-" + name + "-" + "expiry",
+          Date.now() + 3600 * 1000
+        )
+      })
       .then((_) => {
         sendResponse({ success: true })
         // Return true to keep the message channel open
         return true
       })
       .catch((e) => {
-        console.error(`Error refreshing repo data ${owner + "/" + name} `)
+        console.error(`Error refreshing repo data ${owner + "/" + name}: ${e}`)
         sendResponse({ success: false })
       })
   }
