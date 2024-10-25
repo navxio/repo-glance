@@ -42,8 +42,9 @@ async function getAccessToken() {
   const accessTokenExpiry = await storage.get("accessTokenExpiry")
 
   if (!accessTokenExpiry) return null
-  if (accessTokenExpiry > Date.now()) {
-    if (accessTokenExpiry - Date.now() < 30000) {
+  const accessTokenExpiryTimestamp = parseInt(accessTokenExpiry)
+  if (accessTokenExpiryTimestamp > Date.now()) {
+    if (accessTokenExpiryTimestamp - Date.now() < 30000) {
       chrome.runtime.sendMessage({
         type: "REFRESH_ACCESS_TOKEN"
       })
@@ -54,9 +55,10 @@ async function getAccessToken() {
     const refreshToken = await storage.get("refreshToken")
     const refreshTokenExpiry = await storage.get("refreshTokenExpiry")
     if (!refreshTokenExpiry) return null
-    if (refreshTokenExpiry < Date.now()) {
+    const refreshTokenExpiryTimestamp: number = parseInt(refreshTokenExpiry)
+    if (refreshTokenExpiryTimestamp < Date.now()) {
       // refresh token expired
-      authenticateWithGitHub().then((data) => null)
+      authenticateWithGitHub()
     }
     const result = await refreshAccessToken(refreshToken)
     console.log("found result from refreshing token", result)
@@ -116,7 +118,7 @@ export const authenticateWithGitHub = function authenticateWithGitHub() {
       url: authUrl,
       interactive: true
     },
-    function (redirectUrl) {
+    async function (redirectUrl) {
       if (chrome.runtime.lastError) {
         console.error(chrome.runtime.lastError.message)
         return
@@ -130,17 +132,41 @@ export const authenticateWithGitHub = function authenticateWithGitHub() {
       }
       console.log("gh code", code)
 
-      // Exchange the code for an access token
-      exchangeCodeForToken(code)
-        .then((data) => {
-          console.log("exchanged code for data", data)
-          return data
-        })
-        .catch((e) => {
-          console.log("error exchanging code for accessToken", e)
-        })
+      let data: object = null
+      try {
+        data = await exchangeCodeForToken(code)
+      } catch (e) {
+        console.error(`Error exchange code for accessToken: ${e}`)
+      }
+
+      // store them tokens
+      try {
+        await storeAuthToken(data["access_token"], data["expires_in"])
+        await storeRefreshToken(
+          data["refresh_token"],
+          data["refresh_token_expires_in"]
+        )
+        console.info("stored the tokens")
+      } catch (e) {
+        console.error(`Error storing tokens: ${e}`)
+      }
     }
   )
+}
+
+async function storeAuthToken(accessToken: string, expiresIn: number) {
+  // expiresIn is in s
+  await Promise.all([
+    storage.set("accessToken", accessToken),
+    storage.set("accessTokenExpiry", Date.now() + expiresIn * 1000)
+  ])
+}
+
+async function storeRefreshToken(refreshToken: string, expiresIn: number) {
+  await Promise.all([
+    storage.set("refreshToken", refreshToken),
+    storage.set("refreshTokenExpiry", Date.now() + expiresIn * 1000)
+  ])
 }
 
 // Fetch repository details using Apollo Client with dynamic Authorization
