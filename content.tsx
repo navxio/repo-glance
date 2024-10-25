@@ -28,7 +28,14 @@ const RepoMetadataExtension = () => {
 
       // Render the Popup component
       if (popupRootRef.current) {
-        popupRootRef.current.render(<Popup owner={owner} name={name} />)
+        // force re render
+        popupRootRef.current.render(
+          <Popup
+            key={`${owner}-${name}-${Date.now()}`}
+            owner={owner}
+            name={name}
+          />
+        )
       }
     }
   }
@@ -57,6 +64,7 @@ const RepoMetadataExtension = () => {
         const owner = matches[1]
         const name = matches[2]
         link.addEventListener("mouseenter", async (event) => {
+          console.log("added event listener for repo ", owner, name)
           await fetchMetadataShowPopup(event, owner, name)
         })
         link.addEventListener("mouseleave", hidePopup)
