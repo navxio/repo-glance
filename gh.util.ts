@@ -172,7 +172,7 @@ async function storeRefreshToken(refreshToken: string, expiresIn: number) {
 // Fetch repository details using Apollo Client with dynamic Authorization
 export const fetchRepoDetails = async ({ owner, name }) => {
   // Get accessToken dynamically from the custom hook
-  const { accessToken } = await getAccessToken()
+  const accessToken = await getAccessToken()
 
   if (!accessToken) {
     throw new Error("No access token available")
