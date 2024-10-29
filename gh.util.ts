@@ -172,7 +172,7 @@ async function storeRefreshToken(refreshToken: string, expiresIn: number) {
 }
 
 // Fetch repository details using Apollo Client with dynamic Authorization
-const fetchRepoDetails = async ({ owner, name }) => {
+export const fetchRepoDetails = async ({ owner, name }) => {
   // Get accessToken dynamically from the custom hook
   const accessToken = await getAccessToken()
 
@@ -222,7 +222,7 @@ export async function getRepoDetails(owner: string, name: string) {
     return repoData
   } else {
     const repoData = await storage.get(dataKey)
-    console.log(`Found cached data ${repoData} `)
+    console.log(`Found cached data ${JSON.stringify(repoData)}`)
     chrome.runtime.sendMessage({ type: "REFRESH_REPO_CACHE", owner, name })
     return repoData
   }

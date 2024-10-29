@@ -24,7 +24,22 @@ const RepoMetaPopupUI = ({ owner, name }) => {
   useEffect(() => {
     console.log("fetching repo details for:", owner, name)
     getRepoDetails(owner, name)
-      .then((data) => setRepoData(data))
+      .then((data) => {
+        if ("repository" in data) {
+          const repoDataRaw = data["repository"]
+
+          const repoData = {
+            description: repoDataRaw["description"],
+            stargazerCount: repoDataRaw["stargazers"]["totalCount"],
+            prCount: repoDataRaw["pullRequests"]["totalCount"],
+            issueCount: repoDataRaw["issues"]["totalCount"],
+            forkCount: repoDataRaw["forks"]["totalCount"]
+          }
+          setRepoData(repoData)
+        } else {
+          setRepoData(data)
+        }
+      })
       .catch((e) => {
         console.error(`Error getting repo details ${e}`)
       })
