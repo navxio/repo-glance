@@ -172,7 +172,7 @@ async function storeRefreshToken(refreshToken: string, expiresIn: number) {
 }
 
 // Fetch repository details using Apollo Client with dynamic Authorization
-export const fetchRepoDetails = async ({ owner, name }) => {
+const fetchRepoDetails = async ({ owner, name }) => {
   // Get accessToken dynamically from the custom hook
   const accessToken = await getAccessToken()
 
@@ -194,5 +194,36 @@ export const fetchRepoDetails = async ({ owner, name }) => {
     return data
   } catch (error) {
     throw new Error(`Error fetching repository details: ${error.message}`)
+  }
+}
+
+export async function getRepoDetails(owner: string, name: string) {
+  // tries the cache for ze repo and fetches it from api if not available
+  const dataKey = `${owner}-${name}`
+  const expiryKey = `${owner}-${name}-expiry`
+  const expiryTimestampStr = await storage.get(expiryKey)
+  console.log(`found expiry timestamp ${expiryTimestampStr}`)
+  const expiryTimestamp = parseInt(expiryTimestampStr)
+  if (!expiryTimestamp || Date.now() > expiryTimestamp) {
+    const repoResponseData = await fetchRepoDetails({ owner, name })
+    const repoDataRaw = repoResponseData["repository"]
+
+    const repoData = {
+      description: repoDataRaw["description"],
+      stargazerCount: repoDataRaw["stargazers"]["totalCount"],
+      prCount: repoDataRaw["pullRequests"]["totalCount"],
+      issueCount: repoDataRaw["issues"]["totalCount"],
+      forkCount: repoDataRaw["forks"]["totalCount"]
+    }
+
+    console.log(`Fetched repoData ${repoData}`)
+    await storage.set(dataKey, repoData)
+    await storage.set(expiryKey, Date.now() + 3600 * 1000)
+    return repoData
+  } else {
+    const repoData = await storage.get(dataKey)
+    console.log(`Found cached data ${repoData} `)
+    chrome.runtime.sendMessage({ type: "REFRESH_REPO_CACHE", owner, name })
+    return repoData
   }
 }
