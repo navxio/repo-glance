@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react"
+import debounce from "lodash/debounce"
+import React, { useEffect, useRef } from "react"
 import { createRoot } from "react-dom/client.js"
 
 import Popup from "./RepoMetaPopupUI"
@@ -40,14 +41,15 @@ const RepoMetadataExtension = () => {
     }
   }
 
+  const debouncedFetchMetadataShowPopup = debounce(fetchMetadataShowPopup, 300)
+
   useEffect(() => {
     if (!popupRef.current) {
       popupRef.current = document.createElement("div")
       popupRef.current.style.position = "absolute"
       popupRef.current.style.zIndex = "10000"
       popupRef.current.style.backgroundColor = "black"
-      popupRef.current.style.borderRadius = "8px"
-      popupRef.current.style.padding = "10px"
+      popupRef.current.style.borderRadius = "20px"
       popupRef.current.style.color = "white"
       popupRef.current.style.visibility = "hidden" // Start hidden
       document.body.appendChild(popupRef.current)
@@ -65,7 +67,7 @@ const RepoMetadataExtension = () => {
         const name = matches[2]
         link.addEventListener("mouseenter", async (event) => {
           console.log("added event listener for repo ", owner, name)
-          await fetchMetadataShowPopup(event, owner, name)
+          debouncedFetchMetadataShowPopup(event, owner, name)
         })
         link.addEventListener("mouseleave", hidePopup)
       }
