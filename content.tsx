@@ -4,8 +4,8 @@ import { createRoot } from "react-dom/client.js"
 
 import Popup from "./RepoMetaPopupUI"
 
-const githubRegex: RegExp =
-  /https:\/\/github\.com\/(?!topics|collections|features|explore|issues|pulls|marketplace|settings|apps|events|sponsors|about|search|notifications|organizations|enterprise|stars|gists|readme|users|security|contact|solutions)([A-Za-z0-9-]+)\/([A-Za-z0-9-_]+)(\/[^?]*)?(\?.*)?$/
+const GITHUB_REGEX: RegExp =
+  /https:\/\/github\.com\/(?!topics|collections|features|explore|issues|pulls|marketplace|settings|apps|events|sponsors|about|search|notifications|organizations|enterprise|stars|gists|readme|users|security|contact|solutions)([A-Za-z0-9-]+)\/([A-Za-z0-9._-]+)\/?([^?]*)?(\?.*)?$/;
 
 // export this component
 const RepoMetadataExtension = () => {
@@ -61,7 +61,7 @@ const RepoMetadataExtension = () => {
     }
     // add listeners to every gh link
     document.querySelectorAll("a").forEach((link) => {
-      const matches = link.href.match(githubRegex)
+      const matches = link.href.match(GITHUB_REGEX)
       if (matches && link.href.indexOf(window.location.href) === -1) {
         const owner = matches[1]
         const name = matches[2]
