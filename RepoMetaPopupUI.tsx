@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import CommitIcon from "react:./svg/Commit.svg"
 import ForkIcon from "react:./svg/Fork.svg"
 import GHIcon from "react:./svg/GH.svg"
 import IssueIcon from "react:./svg/Issue.svg"
@@ -86,12 +85,6 @@ const RepoMetaPopupUI = ({ owner, name }) => {
           <ForkIcon style={{ width: "48px", height: "48px" }} />
         </div>
         <div className="col">{repoData.forkCount}</div>
-      </div>
-      <div className="row">
-        <div className="col icon">
-          <CommitIcon style={{ width: "48px", height: "48px" }} />
-        </div>
-        <div className="col">{repoData.lastCommitTimestamp}</div>
       </div>
     </div>
   )
