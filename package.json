@@ -1,8 +1,8 @@
 {
-  "name": "repo-meta",
-  "displayName": "Repo meta",
+  "name": "repo-glance",
+  "displayName": "Repo Glance",
   "version": "0.0.1",
-  "description": "See github repository metadata inline",
+  "description": "See github repository metadata in a popup",
   "author": "Navdeep Saini",
   "scripts": {
     "dev": "plasmo dev",
