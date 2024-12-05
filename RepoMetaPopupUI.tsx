@@ -4,18 +4,9 @@ import GHIcon from "react:./svg/GH.svg"
 import IssueIcon from "react:./svg/Issue.svg"
 import PRIcon from "react:./svg/PR.svg"
 import StarIcon from "react:./svg/Star.svg"
-import styled from "styled-components"
 
 import { getRepoDetails } from "~gh.util"
 
-const StyledPopup = styled.div`
-  position: absolute;
-  z-index: 10000;
-  border-radius: 20px;
-  background-color: black;
-  color: white;
-  visibility: hidden;
-`
 
 const RepoMetaPopupUI = ({ owner, name }) => {
   const [repoData, setRepoData] = useState({})
