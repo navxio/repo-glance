@@ -4,7 +4,7 @@
 
 Dead simple chrome extension that shows github repository metadata as a popup
 
-![Screenshot](img/screenshot.png)
+![Screenshot](assets/screenshot.png)
 
 ### How to install
 
@@ -15,7 +15,7 @@ Dead simple chrome extension that shows github repository metadata as a popup
 - [x] (Perf) Move to gh graphql api
 - [ ] Firefox support
 - [ ] delegate extra work to service workers
-- [ ] Topics
+- [ ] Font size range picker
 
 ### Contributing
 
