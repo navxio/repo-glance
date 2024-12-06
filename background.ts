@@ -36,5 +36,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.error(`Error refreshing repo data ${owner + "/" + name}: ${e}`)
         sendResponse({ success: false })
       })
+  } else if (message.type === 'REFRESH_CURRENT_PAGE') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: "refreshPage" });
+      }
+    });
   }
 })

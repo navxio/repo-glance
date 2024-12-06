@@ -7,6 +7,12 @@ import Popup from "./RepoMetaPopupUI"
 const GITHUB_REGEX: RegExp =
   /https:\/\/github\.com\/(?!topics|collections|features|explore|issues|pulls|marketplace|settings|apps|events|sponsors|about|search|notifications|organizations|enterprise|stars|gists|readme|users|security|contact|solutions)([A-Za-z0-9-]+)\/([A-Za-z0-9._-]+)\/?([^?]*)?(\?.*)?$/;
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'refreshPage') {
+    window.location.reload()
+  }
+})
+
 // export this component
 const RepoMetadataExtension = () => {
   const popupRootRef = useRef(null)

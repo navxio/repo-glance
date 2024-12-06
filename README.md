@@ -13,8 +13,8 @@ Dead simple chrome extension that shows github repository metadata as a popup
 #### TODO
 
 - [x] (Perf) Move to gh graphql api
+- [x] delegate extra work to service workers
 - [ ] Firefox support
-- [ ] delegate extra work to service workers
 - [ ] Font size range picker
 
 ### Contributing
