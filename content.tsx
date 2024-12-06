@@ -24,8 +24,8 @@ const RepoMetadataExtension = () => {
     // Ensure popupRef.current is defined
     if (popupRef.current) {
       popupRef.current.style.visibility = "visible"
-      popupRef.current.style.top = `${event.pageY}px`
-      popupRef.current.style.left = `${event.pageX}px`
+      popupRef.current.style.top = `${event.pageY + 20}px`
+      popupRef.current.style.left = `${event.pageX + 20}px`
 
       // Render the Popup component
       if (popupRootRef.current) {
@@ -51,6 +51,8 @@ const RepoMetadataExtension = () => {
       popupRef.current.style.backgroundColor = "black"
       popupRef.current.style.borderRadius = "20px"
       popupRef.current.style.color = "white"
+      popupRef.current.style.maxWidth = "400px";
+      popupRef.current.style.display = 'flex';
       popupRef.current.style.visibility = "hidden" // Start hidden
       document.body.appendChild(popupRef.current)
     }

@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  margin: 0 auto;
+  padding: 4px;
+  max-width: 400px;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Row styling */
+.row {
+  display: flex;            /* Enable Flexbox */
+  gap: 16px;                /* Add spacing between columns */
+  margin: -8px;             /* Counter gap for row alignment */
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.repo-name {
+  text-decoration: underline;
+}
+
+/* Column styling */
+.col {
+  flex: 1;                  /* Take up equal space */
+  padding: 8px;             /* Add padding inside columns */
+  box-sizing: border-box;   /* Include padding in size calculations */
+  text-align: center;
+}
+
+svg {
+  width: 12px;
+  height: 12px;
+}

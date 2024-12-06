@@ -5,6 +5,7 @@ import IssueIcon from "react:./svg/Issue.svg"
 import PRIcon from "react:./svg/PR.svg"
 import StarIcon from "react:./svg/Star.svg"
 
+import "~styles.css"
 import { getRepoDetails } from "~gh.util"
 
 
@@ -43,42 +44,23 @@ const RepoMetaPopupUI = ({ owner, name }) => {
   }
 
   return (
-    <div className="popup">
+    <div className="container">
       <div className="row">
-        <div className="col icon">
-          <GHIcon style={{ width: "48px", height: "48px" }} />
-        </div>
-        <div className="col">{owner + "/" + name}</div>
+        <div className="col repo-name"><GHIcon /> {owner + "/" + name}</div>
       </div>
       <div className="row">
-        <div className="col icon">{repoData.description}</div>
+        <div className="col">{repoData.description}</div>
       </div>
       <div className="row">
-        <div className="col icon">
-          <StarIcon style={{ width: "48px", height: "48px" }} />
-        </div>
-        <div className="col">{repoData.stargazerCount}</div>
+        <div className="col"><StarIcon />{repoData.stargazerCount}</div>
+        <div className="col"><PRIcon />{repoData.prCount}</div>
+        <div className="col"><IssueIcon />{repoData.issueCount}</div>
+        <div className="col"><ForkIcon />{repoData.forkCount}</div>
       </div>
-      <div className="row">
-        <div className="col icon">
-          <PRIcon style={{ width: "48px", height: "48px" }} />
-        </div>
-        <div className="col">{repoData.prCount}</div>
-      </div>
-      <div className="row">
-        <div className="col icon">
-          <IssueIcon style={{ width: "48px", height: "48px" }} />
-        </div>
-        <div className="col">{repoData.issueCount}</div>
-      </div>
-      <div className="row">
-        <div className="col icon">
-          <ForkIcon style={{ width: "48px", height: "48px" }} />
-        </div>
-        <div className="col">{repoData.forkCount}</div>
-      </div>
+
     </div>
   )
+
 }
 
 export default RepoMetaPopupUI
