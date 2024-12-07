@@ -3,7 +3,7 @@ import storage from "~storage"
 
 const STORAGE_KEY: string = 'com.github.navxio.repo_glance.blacklist'
 
-const addToBlacklist = async (domain: string): Promise<boolean | null> => {
+export const addToBlacklist = async (domain: string): Promise<boolean | null> => {
   if (!domain) return false
   let BLACKLIST: [string]
   try {
@@ -27,7 +27,7 @@ const addToBlacklist = async (domain: string): Promise<boolean | null> => {
   return true
 }
 
-const removeFromBlacklist = async (domain: string): Promise<boolean | null> => {
+export const removeFromBlacklist = async (domain: string): Promise<boolean | null> => {
   if (!domain) return false
 
   let BLACKLIST: [string]
@@ -55,7 +55,7 @@ const removeFromBlacklist = async (domain: string): Promise<boolean | null> => {
 
 }
 
-const inBlacklist = async (domain: string): Promise<boolean | null> => {
+export const inBlacklist = async (domain: string): Promise<boolean | null> => {
   // throw null if there's an error
 
   let BLACKLIST: [string]
@@ -69,9 +69,3 @@ const inBlacklist = async (domain: string): Promise<boolean | null> => {
   }
   return BLACKLIST.indexOf('domain') !== -1
 }
-
-const util = {
-  inBlacklist, removeFromBlacklist, addToBlacklist
-}
-
-export default util
