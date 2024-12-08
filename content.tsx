@@ -1,15 +1,35 @@
 import debounce from "lodash/debounce"
 import React, { useEffect, useRef } from "react"
 import { createRoot } from "react-dom/client.js"
+import { inBlacklist, addToBlacklist, removeFromBlacklist } from "~blacklist.util"
 
 import Popup from "./RepoMetaPopupUI"
 
 const GITHUB_REGEX: RegExp =
   /https:\/\/github\.com\/(?!topics|collections|features|explore|issues|pulls|marketplace|settings|apps|events|sponsors|about|search|notifications|organizations|enterprise|stars|gists|readme|users|security|contact|solutions)([A-Za-z0-9-]+)\/([A-Za-z0-9._-]+)\/?([^?]*)?(\?.*)?$/;
 
+// all event listeners
+//
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'refreshPage') {
     window.location.reload()
+  } else if (message.type === 'blacklistDomain') {
+    const domain: string = new URL(window.location.href).hostname
+    addToBlacklist(domain).then(res => {
+      console.log(`added host ${domain} to blacklist`)
+    }).catch(e => {
+      console.error('error adding current host to blacklist')
+    })
+  } else if (message.type === 'fetchDomain') {
+    const domain: string = new URL(window.location.href).hostname
+    sendResponse({ domain })
+  } else if (message.type === 'whitelistDomain') {
+    const domain: string = new URL(window.location.href).hostname
+    removeFromBlacklist(domain).then(res => {
+      console.log(`removed host ${domain} from blacklist`)
+    }).catch(e => {
+      console.error('error removing current host from blacklist')
+    })
   }
 })
 
@@ -24,14 +44,15 @@ const RepoMetadataExtension = () => {
     }
   }
 
+
+
   async function fetchMetadataShowPopup(event, owner: string, name: string) {
-    console.log("fetchMetadataShowPopup invoked for:", owner, name)
 
     // Ensure popupRef.current is defined
     if (popupRef.current) {
       popupRef.current.style.visibility = "visible"
-      popupRef.current.style.top = `${event.pageY + 20}px`
-      popupRef.current.style.left = `${event.pageX + 20}px`
+      popupRef.current.style.top = `${event.pageY + 10}px`
+      popupRef.current.style.left = `${event.pageX + 10}px`
 
       // Render the Popup component
       if (popupRootRef.current) {
@@ -49,7 +70,13 @@ const RepoMetadataExtension = () => {
 
   const debouncedFetchMetadataShowPopup = debounce(fetchMetadataShowPopup, 300)
 
-  useEffect(() => {
+  const conditionallyPrepareGHLinksAddPopup = async () => {
+    const domain: string = new URL(window.location.href).hostname
+
+    const isBlacklisted: boolean | null = await inBlacklist(domain)
+
+    if (isBlacklisted) return null
+
     if (!popupRef.current) {
       popupRef.current = document.createElement("div")
       popupRef.current.style.position = "absolute"
@@ -74,12 +101,17 @@ const RepoMetadataExtension = () => {
         const owner = matches[1]
         const name = matches[2]
         link.addEventListener("mouseenter", async (event) => {
-          console.log("added event listener for repo ", owner, name)
           debouncedFetchMetadataShowPopup(event, owner, name)
         })
         link.addEventListener("mouseleave", hidePopup)
       }
     })
+
+  }
+
+  useEffect(() => {
+
+    conditionallyPrepareGHLinksAddPopup()
 
     return () => {
       // clean up
