@@ -1,10 +1,12 @@
 import { authenticateWithGitHub, fetchRepoDetails } from "~gh.util"
 import storage from "~storage"
 
+const STORAGE_KEY: string = 'com.github.navxio.repo_glance.blacklist'
 /* EVENT LISTENERS */
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
 
+    storage.set(STORAGE_KEY, [])
     authenticateWithGitHub()
   }
 })
