@@ -67,5 +67,5 @@ export const inBlacklist = async (domain: string): Promise<boolean | null> => {
     console.error('error with storage', e)
     return null
   }
-  return BLACKLIST.indexOf('domain') !== -1
+  return BLACKLIST.indexOf(domain.trim()) !== -1
 }
