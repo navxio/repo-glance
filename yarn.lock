@@ -1517,10 +1517,10 @@
     "@plasmohq/parcel-transformer-svelte" "0.6.0"
     "@plasmohq/parcel-transformer-vue" "0.5.0"
 
-"@plasmohq/parcel-core@0.1.9":
-  version "0.1.9"
-  resolved "https://registry.npmjs.org/@plasmohq/parcel-core/-/parcel-core-0.1.9.tgz"
-  integrity sha512-xuWfArWo4O9+RCb8mdvxf+hFH5lldLnufXGFCXnqBMGvL/A/l1NvQjXjVKYoTnPeX+9iZd534rb/7v49BPayCg==
+"@plasmohq/parcel-core@0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@plasmohq/parcel-core/-/parcel-core-0.1.10.tgz#11863c2688998bc655f58dd9a7106bd9dac7fe15"
+  integrity sha512-XbJrqlgPNo+uQaukWayfRDZnAvdkYrmcydCOz0wfmuksTjDisyGkL3ZbWeX86QPN65CXFyou11/9h3+U9IsHfA==
   dependencies:
     "@parcel/cache" "2.9.3"
     "@parcel/core" "2.9.3"
@@ -4180,10 +4180,10 @@ pirates@^4.0.1:
   resolved "https://registry.npmjs.org/pirates/-/pirates-4.0.6.tgz"
   integrity sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==
 
-plasmo@0.89.3:
-  version "0.89.3"
-  resolved "https://registry.npmjs.org/plasmo/-/plasmo-0.89.3.tgz"
-  integrity sha512-rBOv1fbNnhdfsDmI5XAMCvNmPwZsXWdcPU4lLH8I1PqXNDeyXCEJdiCLC+4LvB8V262a2UhHgvPwTW9Au4qAmQ==
+plasmo@0.89.4:
+  version "0.89.4"
+  resolved "https://registry.yarnpkg.com/plasmo/-/plasmo-0.89.4.tgz#a53c6413898ed4b4ec064a7cc2492fdbebb55af0"
+  integrity sha512-vsoMe8ts0tyW27fZxwQLqWR/58NKqRepLFrZMVBH4ceSIyPDryfPpXzVxmBDH43odbiUVFdh8BGAt2ri2vQuGw==
   dependencies:
     "@expo/spawn-async" "1.7.2"
     "@parcel/core" "2.9.3"
@@ -4192,7 +4192,7 @@ plasmo@0.89.3:
     "@parcel/watcher" "2.2.0"
     "@plasmohq/init" "0.7.0"
     "@plasmohq/parcel-config" "0.41.1"
-    "@plasmohq/parcel-core" "0.1.9"
+    "@plasmohq/parcel-core" "0.1.10"
     buffer "6.0.3"
     chalk "5.3.0"
     change-case "5.1.2"
