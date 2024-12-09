@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }).catch(e => {
       console.error('error adding current baseurl to blacklist')
     })
-  } else if (message.type === 'fetchDomain') {
+  } else if (message.type === 'fetchBaseURL') {
     const baseURL: string = window.location.origin + window.location.pathname
     sendResponse({ baseURL })
   } else if (message.type === 'whitelistDomain') {
