@@ -1,7 +1,7 @@
 {
   "name": "repo-glance",
   "displayName": "Repo Glance",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "See github repository metadata in a popup",
   "author": "Navdeep Saini",
   "scripts": {
