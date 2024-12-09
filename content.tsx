@@ -14,21 +14,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'refreshPage') {
     window.location.reload()
   } else if (message.type === 'blacklistDomain') {
-    const domain: string = new URL(window.location.href).hostname
-    addToBlacklist(domain).then(res => {
-      console.log(`added host ${domain} to blacklist`)
+    const baseURL: string = window.location.origin + window.location.pathname
+    addToBlacklist(baseURL).then(res => {
+      console.log(`added baseurl ${baseURL} to blacklist`)
     }).catch(e => {
-      console.error('error adding current host to blacklist')
+      console.error('error adding current baseurl to blacklist')
     })
   } else if (message.type === 'fetchDomain') {
-    const domain: string = new URL(window.location.href).hostname
-    sendResponse({ domain })
+    const baseURL: string = window.location.origin + window.location.pathname
+    sendResponse({ baseURL })
   } else if (message.type === 'whitelistDomain') {
-    const domain: string = new URL(window.location.href).hostname
-    removeFromBlacklist(domain).then(res => {
-      console.log(`removed host ${domain} from blacklist`)
+    const baseURL: string = window.location.origin + window.location.pathname
+    removeFromBlacklist(baseURL).then(res => {
+      console.log(`remove baseurl ${baseURL} from blacklist`)
     }).catch(e => {
-      console.error('error removing current host from blacklist')
+      console.error('error removing baseurl host from blacklist')
     })
   }
 })
@@ -71,9 +71,9 @@ const RepoMetadataExtension = () => {
   const debouncedFetchMetadataShowPopup = debounce(fetchMetadataShowPopup, 300)
 
   const conditionallyPrepareGHLinksAddPopup = async () => {
-    const domain: string = new URL(window.location.href).hostname
+    const baseURL = window.location.origin + window.location.pathname
 
-    const isBlacklisted: boolean | null = await inBlacklist(domain)
+    const isBlacklisted: boolean | null = await inBlacklist(baseURL)
 
     if (isBlacklisted) return null
 

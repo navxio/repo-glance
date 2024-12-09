@@ -10,8 +10,8 @@ const DefaultPage: React.FC = () => {
       if (tabs[0]?.id) {
         const fetchDomainResult = await chrome.tabs.sendMessage(tabs[0].id, { type: "fetchDomain" })
         if (fetchDomainResult) {
-          const domain: string = fetchDomainResult.domain
-          const isBlacklisted = await inBlacklist(domain)
+          const baseURL: string = window.location.origin + window.location.pathname
+          const isBlacklisted = await inBlacklist(baseURL)
           if (isBlacklisted === null) {
             // no result received from util function
             return

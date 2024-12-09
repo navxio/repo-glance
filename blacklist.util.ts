@@ -3,8 +3,8 @@ import storage from "~storage"
 
 const STORAGE_KEY: string = 'com.github.navxio.repo_glance.blacklist'
 
-export const addToBlacklist = async (domain: string): Promise<boolean | null> => {
-  if (!domain) return false
+export const addToBlacklist = async (baseURL: string): Promise<boolean | null> => {
+  if (!baseURL) return false
   let BLACKLIST: [string]
   try {
     BLACKLIST = await storage.get(STORAGE_KEY)
@@ -13,9 +13,9 @@ export const addToBlacklist = async (domain: string): Promise<boolean | null> =>
     console.error('error with storage', e)
     return null
   }
-  if (BLACKLIST.indexOf(domain.trim()) !== -1) return false
+  if (BLACKLIST.indexOf(baseURL.trim()) !== -1) return false
 
-  BLACKLIST.push(domain.trim())
+  BLACKLIST.push(baseURL.trim())
 
   try {
     await storage.set(STORAGE_KEY, BLACKLIST)
@@ -27,8 +27,8 @@ export const addToBlacklist = async (domain: string): Promise<boolean | null> =>
   return true
 }
 
-export const removeFromBlacklist = async (domain: string): Promise<boolean | null> => {
-  if (!domain) return false
+export const removeFromBlacklist = async (baseURL: string): Promise<boolean | null> => {
+  if (!baseURL) return false
 
   let BLACKLIST: [string]
 
@@ -39,7 +39,7 @@ export const removeFromBlacklist = async (domain: string): Promise<boolean | nul
     console.error('error with storage', e)
     return null
   }
-  const i: number = BLACKLIST.indexOf(domain.trim())
+  const i: number = BLACKLIST.indexOf(baseURL.trim())
   if (i === -1) return false // not found
 
   // remove it
@@ -55,7 +55,7 @@ export const removeFromBlacklist = async (domain: string): Promise<boolean | nul
 
 }
 
-export const inBlacklist = async (domain: string): Promise<boolean | null> => {
+export const inBlacklist = async (baseURL: string): Promise<boolean | null> => {
   // throw null if there's an error
 
   let BLACKLIST: [string]
@@ -67,5 +67,5 @@ export const inBlacklist = async (domain: string): Promise<boolean | null> => {
     console.error('error with storage', e)
     return null
   }
-  return BLACKLIST.indexOf(domain.trim()) !== -1
+  return BLACKLIST.indexOf(baseURL.trim()) !== -1
 }
