@@ -4,7 +4,7 @@
 
 Dead simple chrome extension that shows github repository metadata as a popup
 
-![Screenshot](assets/screenshot.png)
+![Screenshot](assets/screenshot_2.png)
 
 ### How to install
 
