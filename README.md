@@ -8,7 +8,9 @@ Dead simple chrome extension that shows github repository metadata as a popup
 
 ### How to install
 
-![Webstore Icon](https://developer.chrome.com/static/docs/webstore/branding/image/UV4C4ybeBTsZt43U4xis.png)
+- Download the latest release and unzip
+- go to firefox://addons or chrome://extensions, turn on developer mode
+- Load unpacked and navigate to the unzipped folder
 
 #### Development
 
