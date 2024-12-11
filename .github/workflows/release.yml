@@ -39,4 +39,4 @@ jobs:
         with:
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          files: release/*.zip
+          artifacts: release/*.zip
