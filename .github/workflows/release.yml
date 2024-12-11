@@ -31,7 +31,7 @@ jobs:
       - name: Package extension
         run: |
           mkdir -p release
-          mv dist/*.zip release/
+          mv build/*.zip release/
 
       # Upload the ZIP file as a release asset
       - name: Create Release
