@@ -25,10 +25,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ baseURL })
   } else if (message.type === 'whitelistDomain') {
     const baseURL: string = window.location.origin + window.location.pathname
-    removeFromBlacklist(baseURL).then(res => {
+    removeFromBlacklist(baseURL).then(() => {
       console.log(`remove baseurl ${baseURL} from blacklist`)
     }).catch(e => {
-      console.error('error removing baseurl host from blacklist')
+      console.error('error removing baseurl host from blacklist', e)
     })
   }
 })
@@ -43,8 +43,6 @@ const RepoMetadataExtension = () => {
       popupRef.current.style.visibility = "hidden"
     }
   }
-
-
 
   async function fetchMetadataShowPopup(event, owner: string, name: string) {
 
