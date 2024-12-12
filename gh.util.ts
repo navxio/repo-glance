@@ -2,8 +2,24 @@ import { ApolloClient, gql, HttpLink, InMemoryCache } from "@apollo/client"
 
 import storage from "~storage"
 
+
+async function storeAuthToken(accessToken: string, expiresIn: number) {
+  // expiresIn is in s
+  await Promise.all([
+    storage.set("accessToken", accessToken),
+    storage.set("accessTokenExpiry", Date.now() + expiresIn * 1000)
+  ])
+}
+
+async function storeRefreshToken(refreshToken: string, expiresIn: number) {
+  await Promise.all([
+    storage.set("refreshToken", refreshToken),
+    storage.set("refreshTokenExpiry", Date.now() + expiresIn * 1000)
+  ])
+}
+
 // create apollo client
-const client = new ApolloClient({
+const ghGraphClient = new ApolloClient({
   link: new HttpLink({
     uri: "https://api.github.com/graphql"
   }),
@@ -60,7 +76,7 @@ async function getAccessToken() {
     const refreshTokenExpiryTimestamp: number = parseInt(refreshTokenExpiry)
     if (refreshTokenExpiryTimestamp < Date.now()) {
       // refresh token expired
-      authenticateWithGitHub()
+      authorizeGithub()
     }
     const result = await refreshAccessToken(refreshToken)
     console.log("found result from refreshing token", result)
@@ -88,87 +104,55 @@ const refreshAccessToken = async (refreshToken: string) => {
   }
 }
 
-async function exchangeCodeForToken(code: string) {
-  const exchangeTokenUrl = "https://repo-glance.navdeep.io/exchange-github-code"
+function monitorOAuthRedirect(tabId) {
+  chrome.tabs.onUpdated.addListener(function listener(tabIdUpdated, changeInfo, tab) {
+    if (tabIdUpdated === tabId && changeInfo.url) {
+      const url = new URL(changeInfo.url);
+      console.log('myUrl', url)
 
-  let backendResponse: any
+      // Check if the URL is the callback URL
+      if (url.hostname === "repo-glance.navdeep.io" && url.pathname === "/oauth/end") {
+        const token = url.searchParams.get("access_token");
+        const expiresIn = parseInt(url.searchParams.get('expires_in'))
+        const refreshToken = url.searchParams.get('refresh_token')
+        const refreshTokenExpiresIn = parseInt(url.searchParams.get('refresh_token_expires_in'))
 
-  try {
-    backendResponse = await fetch(exchangeTokenUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ code })
-    })
-    if (!backendResponse.ok) return null
-    const data = await backendResponse.json()
-    console.log(`found response for code: ${data}`)
-    return data
-  } catch (e) {
-    console.error(`Error exchanging code for token ${e}`)
-  }
-}
+        console.log('found token', token)
+        console.log('expires in ', expiresIn)
+        if (token) {
+          // Store the token securely
+          // chrome.storage.local.set({ githubToken: token });
+          Promise.all([storeAuthToken(token, expiresIn), storeRefreshToken(refreshToken, refreshTokenExpiresIn)]).then(resArr => {
 
-export const authenticateWithGitHub = function authenticateWithGitHub() {
-  const clientId: string = "Iv1.196bee9ccbc381ba" // Replace with your GitHub OAuth app client ID
-  const redirectUri: string = chrome.identity.getRedirectURL()
-  const authUrl: string = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo`
+            console.log('stored the tokens successfully~!')
+          }).catch(e => {
+            console.error('error storing tokens', e)
+          })
 
-  chrome.identity.launchWebAuthFlow(
-    {
-      url: authUrl,
-      interactive: true
-    },
-    async function (redirectUrl) {
-      if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError.message)
-        return
-      }
+          // Close the OAuth popup
+          chrome.windows.remove(tab.windowId);
 
-      // Extract the authorization code from the redirect URL
-      const code = new URL(redirectUrl).searchParams.get("code")
-      if (!code) {
-        console.error("No code found in redirect URL")
-        return
-      }
-      console.log("gh code", code)
-
-      let data: object = null
-      try {
-        data = await exchangeCodeForToken(code)
-      } catch (e) {
-        console.error(`Error exchange code for accessToken: ${e}`)
-      }
-
-      // store them tokens
-      try {
-        await storeAuthToken(data["access_token"], data["expires_in"])
-        await storeRefreshToken(
-          data["refresh_token"],
-          data["refresh_token_expires_in"]
-        )
-        console.info("stored the tokens")
-      } catch (e) {
-        console.error(`Error storing tokens: ${e}`)
+          // Stop listening for updates
+          chrome.tabs.onUpdated.removeListener(listener);
+        }
       }
     }
-  )
+  });
 }
 
-async function storeAuthToken(accessToken: string, expiresIn: number) {
-  // expiresIn is in s
-  await Promise.all([
-    storage.set("accessToken", accessToken),
-    storage.set("accessTokenExpiry", Date.now() + expiresIn * 1000)
-  ])
-}
+export const authorizeGithub = function authorizeGithub() {
 
-async function storeRefreshToken(refreshToken: string, expiresIn: number) {
-  await Promise.all([
-    storage.set("refreshToken", refreshToken),
-    storage.set("refreshTokenExpiry", Date.now() + expiresIn * 1000)
-  ])
+  const oauthUrl = "https://repo-glance.navdeep.io/oauth/start"
+  chrome.windows.create({
+    url: oauthUrl,
+    type: 'popup',
+    width: 500,
+    height: 600,
+  }, (window) => {
+    const tabId = window.tabs[0].id
+    monitorOAuthRedirect(tabId)
+  });
+
 }
 
 // Fetch repository details using Apollo Client with dynamic Authorization
@@ -181,7 +165,7 @@ export const fetchRepoDetails = async ({ owner, name }) => {
   }
 
   try {
-    const { data } = await client.query({
+    const { data } = await ghGraphClient.query({
       query: GET_REPOSITORY_DETAILS,
       variables: { owner, name },
       context: {
