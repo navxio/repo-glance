@@ -8,9 +8,17 @@ A tiny chrome extension that shows github repository metadata as a popup
 
 ### How to install
 
+Chrome / Edge
+
 - Download the latest release and unzip
-- go to firefox://addons or chrome://extensions, turn on developer mode
+- go to chrome://extensions, turn on developer mode
 - Load unpacked and navigate to the unzipped folder
+
+Firefox
+
+- Download the latest zip
+- go to about:addons and select Debug addons from settings icon
+- Click 'Load Temporary Add-on' and open the downloaded zip
 
 #### Development
 
@@ -22,6 +30,8 @@ Based on the [plasmo](https://docs.plasmo.com) framework
 - [x] delegate extra work to service workers
 - [x] Firefox support
 - [ ] Font size range picker
+
+Tested on Edge 131.0
 
 ### Contributing
 
