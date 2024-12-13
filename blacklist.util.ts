@@ -1,66 +1,39 @@
 // WIP
 import storage from "~storage"
 
-const STORAGE_KEY: string = 'com.github.navxio.repo_glance.blacklist'
+// Initialize the blacklist
+const BLACKLIST_KEY: string = "blacklist";
 
-export const addToBlacklist = async (baseURL: string): Promise<[string] | null> => {
-  if (!baseURL) return null
-  let BLACKLIST: [string]
-  try {
-    BLACKLIST = await storage.get(STORAGE_KEY)
-  } catch (e) {
-    console.error('error with storage', e)
-    return null
+// Add a URL to the blacklist
+export const addToBlacklist = async (url: string) => {
+  const blacklist = (await storage.get(BLACKLIST_KEY)) || [];
+  if (!blacklist.includes(url)) {
+    blacklist.push(url);
+    await storage.set(BLACKLIST_KEY, blacklist);
   }
-  if (BLACKLIST.indexOf(baseURL.trim()) !== -1) return false
+  return blacklist
+};
 
-  BLACKLIST.push(baseURL.trim())
+// Remove a URL from the blacklist
+export const removeFromBlacklist = async (url: string) => {
+  const blacklist = (await storage.get(BLACKLIST_KEY)) || [];
+  const updatedBlacklist = blacklist.filter((item) => item !== url);
+  await storage.set(BLACKLIST_KEY, updatedBlacklist);
+  return blacklist
+};
 
-  try {
-    await storage.set(STORAGE_KEY, BLACKLIST)
-  } catch (e) {
-    console.error('error with storage', e)
-    return null
-  }
-
-  return BLACKLIST
-}
-
-export const removeFromBlacklist = async (baseURL: string): Promise<[string] | null> => {
-  if (!baseURL) return null
-
-  let BLACKLIST: [string]
-
-  try {
-    BLACKLIST = await storage.get(STORAGE_KEY)
-  } catch (e) {
-    console.error('error with storage', e)
-    return null
-  }
-  const i: number = BLACKLIST.indexOf(baseURL.trim())
-  if (i === -1) return null // not found
-
-  // remove it
-  BLACKLIST.pop(i)
-
-  try {
-    await storage.set(STORAGE_KEY, BLACKLIST)
-  } catch (e) {
-    console.error('error with storage', e)
-    return null
-  }
-  return BLACKLIST
-
-}
+// Get the blacklist
+export const getBlacklist = async (): Promise<string[]> => {
+  return (await storage.get(BLACKLIST_KEY)) || [];
+};
 
 export const inBlacklist = async (baseURL: string): Promise<boolean | null> => {
   // throw null if there's an error
 
-  let BLACKLIST: [string]
+  let BLACKLIST: string[]
 
   try {
-    BLACKLIST = await storage.get(STORAGE_KEY)
-
+    BLACKLIST = await storage.get(BLACKLIST_KEY) || []
   } catch (e) {
     console.error('error with storage', e)
     return null
