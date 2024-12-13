@@ -54,21 +54,17 @@ const GET_REPOSITORY_DETAILS = gql`
  *
  */
 async function getAccessToken() {
-  console.log('getAccessToken called')
   const accessTokenExpiry: string = await storage.get('accessTokenExpiry')
-  console.log('accessTokenExpiry', accessTokenExpiry)
   if (!accessTokenExpiry) {
     console.error('Access token expiry time string not found')
   }
   const accessTokenExpiryTime = parseInt(accessTokenExpiry)
 
   if (accessTokenExpiryTime > Date.now()) {
-    console.log('not expried')
     // not expired
     const accessToken: string = await storage.get("accessToken")
     return accessToken
   } else {
-    console.log('expried')
     // expired
     const refreshTokenExpiry: string | null = await storage.get("refreshTokenExpiry")
     if (!refreshTokenExpiry) return null
@@ -85,7 +81,6 @@ async function getAccessToken() {
       }
       const result = await refreshAccessToken(refreshToken)
       // restore
-      console.log('refresh token result', result)
       const storeAuthTokenPromise = storeAuthToken(result['access_token'], Date.now() + 1000 * parseInt(result['expires_in']))
       const storeRefreshTokenPromise = storeRefreshToken(result['refresh_token'], Date.now() + 1000 * parseInt(result['refresh_token_expires_in']))
       await Promise.all([storeAuthTokenPromise, storeRefreshTokenPromise])
@@ -129,13 +124,10 @@ function monitorOAuthRedirect(tabId) {
         const refreshToken = url.searchParams.get('refresh_token')
         const refreshTokenExpiresIn = parseInt(url.searchParams.get('refresh_token_expires_in'))
 
-        console.log('found token', token)
-        console.log('expires in ', expiresIn)
         if (token) {
           // Store the token securely
           // chrome.storage.local.set({ githubToken: token });
           Promise.all([storeAuthToken(token, expiresIn), storeRefreshToken(refreshToken, refreshTokenExpiresIn)]).then(resArr => {
-
             console.log('stored the tokens successfully~!')
           }).catch(e => {
             console.error('error storing tokens', e)

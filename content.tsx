@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   } else if (message.type === 'blacklistDomain') {
     const baseURL: string = window.location.origin + window.location.pathname
     addToBlacklist(baseURL).then(res => {
-      console.log(`added baseurl ${baseURL} to blacklist`)
+      console.log(`added baseurl ${baseURL} to blacklist ${res}`)
     }).catch(e => {
       console.error('error adding current baseurl to blacklist')
     })
@@ -25,8 +25,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ baseURL })
   } else if (message.type === 'whitelistDomain') {
     const baseURL: string = window.location.origin + window.location.pathname
-    removeFromBlacklist(baseURL).then(() => {
-      console.log(`remove baseurl ${baseURL} from blacklist`)
+    removeFromBlacklist(baseURL).then((res) => {
     }).catch(e => {
       console.error('error removing baseurl host from blacklist', e)
     })
