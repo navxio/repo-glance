@@ -51,40 +51,52 @@ const GET_REPOSITORY_DETAILS = gql`
  *
  *  checks the current cache for accesstoken and expiry time
  *  if not expired, returns it
- *  if about to expire, returns it but sends a message to background thread
- *  to refresh it
  *
  */
 async function getAccessToken() {
-  const accessToken = await storage.get("accessToken")
-  const accessTokenExpiry = await storage.get("accessTokenExpiry")
+  console.log('getAccessToken called')
+  const accessTokenExpiry: string = await storage.get('accessTokenExpiry')
+  console.log('accessTokenExpiry', accessTokenExpiry)
+  if (!accessTokenExpiry) {
+    console.error('Access token expiry time string not found')
+  }
+  const accessTokenExpiryTime = parseInt(accessTokenExpiry)
 
-  if (!accessTokenExpiry) return null
-  const accessTokenExpiryTimestamp = parseInt(accessTokenExpiry)
-  if (accessTokenExpiryTimestamp > Date.now()) {
-    if (accessTokenExpiryTimestamp - Date.now() < 30000) {
-      chrome.runtime.sendMessage({
-        type: "REFRESH_ACCESS_TOKEN"
-      })
-    }
+  if (accessTokenExpiryTime > Date.now()) {
+    console.log('not expried')
+    // not expired
+    const accessToken: string = await storage.get("accessToken")
     return accessToken
   } else {
-    // access token expired
-    const refreshToken = await storage.get("refreshToken")
-    const refreshTokenExpiry = await storage.get("refreshTokenExpiry")
+    console.log('expried')
+    // expired
+    const refreshTokenExpiry: string | null = await storage.get("refreshTokenExpiry")
     if (!refreshTokenExpiry) return null
-    const refreshTokenExpiryTimestamp: number = parseInt(refreshTokenExpiry)
-    if (refreshTokenExpiryTimestamp < Date.now()) {
-      // refresh token expired
+    const refreshTokenExpiryTime: number = parseInt(refreshTokenExpiry)
+    console.log(refreshTokenExpiryTime)
+
+    if (refreshTokenExpiryTime < Date.now()) {
+      // re -authorize
       authorizeGithub()
+    } else {
+      const refreshToken: string | null = await storage.get('refreshToken')
+      if (!refreshToken) {
+        authorizeGithub()
+      }
+      const result = await refreshAccessToken(refreshToken)
+      // restore
+      console.log('refresh token result', result)
+      const storeAuthTokenPromise = storeAuthToken(result['access_token'], Date.now() + 1000 * parseInt(result['expires_in']))
+      const storeRefreshTokenPromise = storeRefreshToken(result['refresh_token'], Date.now() + 1000 * parseInt(result['refresh_token_expires_in']))
+      await Promise.all([storeAuthTokenPromise, storeRefreshTokenPromise])
+      return result['access_token']
     }
-    const result = await refreshAccessToken(refreshToken)
-    console.log("found result from refreshing token", result)
   }
+
 }
 
 const refreshAccessToken = async (refreshToken: string) => {
-  const refreshTokenUrl = "https://repo-glance.navdeep.io/refresh-token"
+  const refreshTokenUrl: string = "https://repo-glance.navdeep.io/refresh-token"
   let backendResponse: any
 
   try {
