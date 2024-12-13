@@ -3,12 +3,11 @@ import storage from "~storage"
 
 const STORAGE_KEY: string = 'com.github.navxio.repo_glance.blacklist'
 
-export const addToBlacklist = async (baseURL: string): Promise<boolean | null> => {
-  if (!baseURL) return false
+export const addToBlacklist = async (baseURL: string): Promise<[string] | null> => {
+  if (!baseURL) return null
   let BLACKLIST: [string]
   try {
     BLACKLIST = await storage.get(STORAGE_KEY)
-
   } catch (e) {
     console.error('error with storage', e)
     return null
@@ -24,23 +23,22 @@ export const addToBlacklist = async (baseURL: string): Promise<boolean | null> =
     return null
   }
 
-  return true
+  return BLACKLIST
 }
 
-export const removeFromBlacklist = async (baseURL: string): Promise<boolean | null> => {
-  if (!baseURL) return false
+export const removeFromBlacklist = async (baseURL: string): Promise<[string] | null> => {
+  if (!baseURL) return null
 
   let BLACKLIST: [string]
 
   try {
     BLACKLIST = await storage.get(STORAGE_KEY)
-
   } catch (e) {
     console.error('error with storage', e)
     return null
   }
   const i: number = BLACKLIST.indexOf(baseURL.trim())
-  if (i === -1) return false // not found
+  if (i === -1) return null // not found
 
   // remove it
   BLACKLIST.pop(i)
@@ -51,7 +49,7 @@ export const removeFromBlacklist = async (baseURL: string): Promise<boolean | nu
     console.error('error with storage', e)
     return null
   }
-  return true
+  return BLACKLIST
 
 }
 
