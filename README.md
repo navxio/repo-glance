@@ -31,7 +31,7 @@ Based on the [plasmo](https://docs.plasmo.com) framework
 - [x] Firefox support
 - [ ] Font size range picker
 
-Tested on Edge 131.0, chrome 131.10, firefox 133.0
+Tested on Edge 131.0, chrome 131.10, firefox 133.0 on mac
 
 ### Contributing
 
