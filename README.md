@@ -2,7 +2,7 @@
 
 # repo-glance
 
-A tiny chrome extension that shows github repository metadata as a popup
+A tiny chrome extension that shows github repository metadata as a popup on repo link hover
 
 ![Screenshot](assets/screenshot_2.png)
 
@@ -31,7 +31,7 @@ Based on the [plasmo](https://docs.plasmo.com) framework
 - [x] Firefox support
 - [ ] Font size range picker
 
-Tested on Edge 131.0
+Tested on Edge 131.0, chrome 131.10, firefox 133.0
 
 ### Contributing
 
