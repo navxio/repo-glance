@@ -10,13 +10,13 @@ A tiny chrome extension that shows github repository metadata as a popup on repo
 
 Chrome / Edge
 
-- Download the latest release and unzip
+- Download the latest [release](https://github.com/navxio/repo-glance/releases) and unzip
 - go to chrome://extensions, turn on developer mode
 - Load unpacked and navigate to the unzipped folder
 
 Firefox
 
-- Download the latest zip
+- Download the latest [release](https://github.com/navxio/repo-glance/releases) zip
 - go to about:addons and select Debug addons from settings icon
 - Click 'Load Temporary Add-on' and open the downloaded zip
 
